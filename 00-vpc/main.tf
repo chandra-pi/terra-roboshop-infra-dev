@@ -13,3 +13,8 @@ module "vpc" {
 # output "vpc_id" {
 #     value = module.vpc.vpc_id
 # }
+
+## This for only testing
+# output "vpc_ids" {
+#     value = module.vpc.public_subnet_ids
+# }
