@@ -1,4 +1,4 @@
-resource "aws_instance" "bastion" {
+resource "aws_instance" "mongodb" {
     ami = local.ami_id
     instance_type = "t3.micro"
     vpc_security_group_ids = [local.bastion_sg_id]
@@ -6,7 +6,7 @@ resource "aws_instance" "bastion" {
     tags = merge(
         local.common_tags,
         {
-            Name = "${var.project}-${var.environment}-bastion"
+            Name = "${var.project}-${var.environment}-mongodb"
         }
     )
 

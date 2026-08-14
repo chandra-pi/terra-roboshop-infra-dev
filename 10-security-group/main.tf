@@ -42,6 +42,17 @@ module "vpn" {
 
 }
 
+module "mongodb" {
+    # source = "../../terraform-aws-security-group"
+    source = "git::https://github.com/chandra-pi/terraform-aws-security-group.git?ref=main"
+    project = var.project
+    environment = var.environment
+    sg_name = "mongodb"
+    sg_description = "for mongodb"
+    vpc_id = local.vpc_id
+
+}
+
 ## bastion accepting connections from my laptop
 resource "aws_security_group_rule" "bastion_laptop" {
     type              = "ingress"
@@ -55,8 +66,8 @@ resource "aws_security_group_rule" "bastion_laptop" {
 ## backend ALB accepting connections from bastion host from port no 80
 resource "aws_security_group_rule" "backend_alb_bastion" {
     type              = "ingress"
-    from_port         = 22
-    to_port           = 22
+    from_port         = 80
+    to_port           = 80
     protocol          = "tcp"
     ## cidr_blocks       = ["0.0.0.0/0"] ## we can give either CIDR block or source_security_group_id
     source_security_group_id = module.bastion.sg_id
@@ -103,9 +114,20 @@ resource "aws_security_group_rule" "vpn_943" {
 ## backend ALB accepting connections from VPN host from port no 80
 resource "aws_security_group_rule" "backend_alb_vpn" {
     type              = "ingress"
-    from_port         = 22
-    to_port           = 22
+    from_port         = 80
+    to_port           = 80
     protocol          = "tcp"
     source_security_group_id = module.vpn.sg_id
     security_group_id = module.backend_alb.sg_id
+}
+
+
+resource "aws_security_group_rule" "mongodb_vpn_ssh" {
+    count = length(var.mongodb_ports_vpn)
+    type              = "in gress"
+    from_port         = var.mongodb_ports_vpn[count.index]
+    to_port           = var.mongodb_ports_vpn[count.index]
+    protocol          = "tcp"
+    source_security_group_id = module.vpn.sg_id
+    security_group_id = module.mongodb.sg_id
 }
