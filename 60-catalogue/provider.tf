@@ -9,7 +9,7 @@ terraform {
   backend "s3" {
       ## bucket = "84s-remote-state-dev-sec" this is for common use
       bucket = "84s-remote-state-dev-robo" ## dev bucket
-      key = "roboshop-dev-backend-alb"
+      key = "roboshop-dev-catalogue"
       region = "us-east-1"
       #dynamodb_table = "84s-remote-state-dev"
       encrypt = true
