@@ -19,5 +19,5 @@ resource "aws_instance" "vpn" {
             Name = "${var.project}-${var.environment}-vpn"
         }
     )
-
+    
 }

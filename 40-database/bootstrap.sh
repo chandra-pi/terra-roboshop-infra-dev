@@ -2,4 +2,6 @@
 
 component=$1
 dnf install ansible -y
-ansible-pull -U https://github.com/chandra-pi/ansible-roboshop-roles.git -e component=$1 main.yaml
+ansible-pull -U https://github.com/chandra-pi/ansible-roboshop-roles-tf.git -e component=$1 main.yaml
+
+## https://github.com/chandra-pi/ansible-roboshop-roles-tf.git
