@@ -21,7 +21,7 @@ resource "aws_instance" "catalogue" {
     vpc_security_group_ids = [local.catalogue_sg_id]
     subnet_id = local.private_subnet_id
 
-    ## iam_instance_profile = "EC2RoleToFetchSSMParams"  ## this need to create in IAM roles
+    ## iam_instance_profile = "EC2RoleToFetchSSMParams"  ## this is not required here
 
     tags = merge(
         local.common_tags,
@@ -51,7 +51,39 @@ resource "terraform_data" "catalogue" {
     provisioner "remote-exec" {
         inline = [
             "chmod +x /tmp/catalogue.sh",
-            "sudo sh /tmp/catalogue.sh catalogue",
+            "sudo sh /tmp/catalogue.sh catalogue ${var.environment}",
         ]
     }
+}
+
+resource "aws_ec2_instance_state" "catalogue" {
+    instance_id = aws_instance.catalogue.id
+    state       = "stopped"
+    depends_on = [terraform_data.catalogue]
+}
+
+
+resource "aws_ami_from_instance" "catalogue" {
+    name               = "${var.project}-${var.environment}-catalogue"
+    source_instance_id = aws_instance.catalogue.id
+    depends_on = [aws_ec2_instance_state.catalogue]
+    tags = merge(
+        local.common_tags,
+        {
+            Name = "${var.project}-${var.environment}-catalogue"
+        }
+    )
+}
+
+resource "terraform_data" "catalogue-delete" {
+    triggers_replace = [
+        aws_instance.catalogue.id
+    ]
+
+    ### aws confifure should done in our local laptop
+    provisioner "local-exec" {
+        command = "aws ec2 terminate-instances --instance_ids ${aws_instance.catalogue.id}"
+    }
+
+    depends_on = [aws_ami_from_instance.catalogue]
 }
