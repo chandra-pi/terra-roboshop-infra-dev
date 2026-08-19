@@ -3,7 +3,7 @@ resource "aws_lb_target_group" "catalogue" {
     port     = 8080
     protocol = "HTTP"
     vpc_id   = local.vpc_id
-
+    deregistration_delay = 120
     health_check {
         healthy_threshold = 2
         interval = 5
@@ -82,7 +82,7 @@ resource "terraform_data" "catalogue-delete" {
 
     ### aws confifure should done in our local laptop
     provisioner "local-exec" {
-        command = "aws ec2 terminate-instances --instance_ids ${aws_instance.catalogue.id}"
+        command = "aws ec2 terminate-instances --instance-ids ${aws_instance.catalogue.id}"
     }
 
     depends_on = [aws_ami_from_instance.catalogue]
