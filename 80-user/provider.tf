@@ -1,0 +1,23 @@
+terraform {
+    required_providers {
+        aws = {
+            source = "hashicorp/aws"
+            version = "5.98.0"
+        }
+  }
+
+  backend "s3" {
+      ## bucket = "84s-remote-state-dev-sec" this is for common use
+      bucket = "84s-remote-state-dev-robo" ## dev bucket
+      key = "roboshop-dev-user"
+      region = "us-east-1"
+      #dynamodb_table = "84s-remote-state-dev"
+      encrypt = true
+      use_lockfile = true
+  }
+}
+
+provider "aws" {
+    # Configuration options
+    region = "us-east-1"
+}
