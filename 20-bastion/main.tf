@@ -6,7 +6,7 @@ resource "aws_instance" "bastion" {
     
     # need more for terraform
     root_block_device {
-        volume_size = 50
+        volume_size = 50   ### 50 GB we are allocating for terraform in bastion host
         volume_type = "gp3" # or "gp2", depending on your preference
     }
     user_data = file("bastion.sh")
